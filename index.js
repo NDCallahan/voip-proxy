@@ -7,7 +7,6 @@ app.use(express.json());
 
 app.post("/voip", async (req, res) => {
   try {
-    // Convert JSON body → URL-encoded form (VoIP.ms requirement)
     const params = new URLSearchParams(req.body);
 
     const response = await fetch("https://voip.ms/api/v1/rest.php", {
