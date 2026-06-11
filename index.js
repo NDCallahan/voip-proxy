@@ -1,19 +1,24 @@
 import express from "express";
 import fetch from "node-fetch";
+import { URLSearchParams } from "url";
 
 const app = express();
 app.use(express.json());
 
 app.post("/voip", async (req, res) => {
   try {
+    // Convert JSON body → URL-encoded form (VoIP.ms requirement)
+    const params = new URLSearchParams(req.body);
+
     const response = await fetch("https://voip.ms/api/v1/rest.php", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req.body)
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString()
     });
 
     const data = await response.json();
     res.json(data);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
