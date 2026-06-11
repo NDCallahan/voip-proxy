@@ -3,10 +3,14 @@ import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 
 const app = express();
-app.use(express.json());
+
+// Accept raw text bodies (Activepieces sends raw text)
+app.use(express.text({ type: "*/*" }));
 
 app.post("/voip", async (req, res) => {
   try {
+    // req.body is a raw string like:
+    // "api_username=...&api_password=...&method=getDIDsInfo"
     const params = new URLSearchParams(req.body);
 
     const response = await fetch("https://voip.ms/api/v1/rest.php", {
@@ -15,6 +19,7 @@ app.post("/voip", async (req, res) => {
       body: params.toString()
     });
 
+    // VoIP.ms returns JSON when the request is correct
     const data = await response.json();
     res.json(data);
 
